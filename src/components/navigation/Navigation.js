@@ -1,15 +1,12 @@
 import React from "react"
 import styled from "styled-components"
 import { Link } from "gatsby"
-import { theme } from "../../assets/styles/mainTheme"
 
 const Nav = styled.nav`
-  position: absolute;
-  top: 0;
-  left: 0;
   display: flex;
   align-items: center;
-  padding: 40px 50px;
+  padding: 0 40px;
+  height: 80px;
   width: 100%;
   background-color: ${({ theme }) => theme.colors.backgorund};
   color: ${({ theme }) => theme.colors.textInverse};

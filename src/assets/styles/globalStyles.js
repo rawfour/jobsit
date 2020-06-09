@@ -26,7 +26,6 @@ const GlobalStyle = createGlobalStyle`
   body {
     font-size: 1.6rem;
     font-family: 'Montserrat', sans-serif;
-    padding: 150px 40px;
     color: ${({ theme }) => theme.colors.text};
   }
 
