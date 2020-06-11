@@ -1,8 +1,10 @@
-import React from "react"
-import styled from "styled-components"
-import Map from "../components/Map"
-import Offers from "../components/Offers"
-import Filters from "../components/Filters"
+import React from 'react';
+import PropTypes from 'prop-types';
+import styled, { withTheme } from 'styled-components';
+import { useMediaQuery } from 'react-responsive';
+import Map from '../components/Map';
+import Offers from '../components/Offers';
+import Filters from '../components/Filters';
 
 const mapOptions = {
   center: { lat: 52, lng: 18 },
@@ -10,22 +12,52 @@ const mapOptions = {
   scrollwheel: true,
   mapTypeControl: false,
   streetViewControl: false,
-}
+};
 
 const PageWrapper = styled.div`
-  display: grid;
-  grid-template-columns: 40% 60%;
-`
+  display: flex;
+  flex-wrap: wrap;
+`;
 
-const IndexPage = () => {
+const OffersWrapper = styled.div`
+  position: relative;
+
+  flex-basis: 100%;
+  @media ${({ theme }) => theme.breakpoints.lg} {
+    flex-basis: 50%;
+  }
+`;
+
+const FiltersWrapper = styled.div`
+  position: relative;
+  flex-basis: 100%;
+  min-height: 115px;
+  @media ${({ theme }) => theme.breakpoints.lg} {
+    flex-basis: 50%;
+    order: 2;
+  }
+`;
+
+const IndexPage = ({ theme }) => {
+  const isDesktop = useMediaQuery({
+    query: theme.breakpoints.lg,
+  });
+
   return (
     <PageWrapper>
-      <Offers />
-      <div>
+      <FiltersWrapper>
         <Filters />
-        <Map options={mapOptions} />
-      </div>
+        {isDesktop && <Map options={mapOptions} />}
+      </FiltersWrapper>
+      <OffersWrapper>
+        <Offers />
+      </OffersWrapper>
     </PageWrapper>
-  )
-}
-export default IndexPage
+  );
+};
+
+IndexPage.propTypes = {
+  theme: PropTypes.shape().isRequired,
+};
+
+export default withTheme(IndexPage);

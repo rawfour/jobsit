@@ -1,4 +1,4 @@
-import { createGlobalStyle } from "styled-components"
+import { createGlobalStyle } from 'styled-components';
 
 const GlobalStyle = createGlobalStyle`
 
@@ -24,11 +24,14 @@ const GlobalStyle = createGlobalStyle`
   }
 
   body {
-    font-size: 1.6rem;
+    font-size: ${({ theme }) => theme.fontSizes.s};
     font-family: 'Montserrat', sans-serif;
     color: ${({ theme }) => theme.colors.text};
+    @media ${({ theme }) => theme.breakpoints.lg} {
+      font-size: ${({ theme }) => theme.fontSizes.m};
+  }
   }
 
-`
+`;
 
-export default GlobalStyle
+export default GlobalStyle;

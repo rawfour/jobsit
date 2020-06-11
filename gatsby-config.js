@@ -14,7 +14,7 @@ module.exports = {
         fonts: [
           {
             family: `Montserrat`,
-            variants: [`400`, `600`, `700`],
+            variants: [`500`, `600`, `700`],
           },
         ],
       },
@@ -44,4 +44,4 @@ module.exports = {
     // To learn more, visit: https://gatsby.dev/offline
     // `gatsby-plugin-offline`,
   ],
-}
+};
