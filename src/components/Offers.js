@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useStaticQuery, graphql } from 'gatsby';
 import OfferItem from './OfferItem';
-import data from '../assets/data.json';
 
 const OffersWrapper = styled.ul`
   position: relative;
@@ -16,7 +16,35 @@ const OffersWrapper = styled.ul`
 `;
 
 const Offers = () => {
-  const items = data.map((item) => <OfferItem key={item.id} item={item} />);
+  const data = useStaticQuery(graphql`
+    {
+      allMdx {
+        nodes {
+          id
+          frontmatter {
+            company
+            image {
+              publicURL
+            }
+            new
+            featured
+            position
+            role
+            level
+            postedAt
+            contract
+            location
+            languages
+            tools
+          }
+        }
+      }
+    }
+  `);
+
+  const { allMdx } = data;
+
+  const items = allMdx.nodes.map((item) => <OfferItem key={item.id} item={item.frontmatter} />);
 
   return <OffersWrapper>{items}</OffersWrapper>;
 };

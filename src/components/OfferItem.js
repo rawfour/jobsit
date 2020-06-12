@@ -1,7 +1,6 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
 import PropTypes from 'prop-types';
-import image from '../assets/images/photosnap.svg';
 
 const ListItem = styled.li`
   display: flex;
@@ -46,12 +45,14 @@ const LogoWrapper = styled.div`
   position: relative;
   width: 100%;
   @media ${({ theme }) => theme.breakpoints.lg} {
-    width: auto;
-    flex-basis: 60px;
+    width: 50px;
     display: flex;
     justify-content: center;
     align-items: center;
     margin-right: 15px;
+  }
+  @media ${({ theme }) => theme.breakpoints.xl} {
+    width: 60px;
   }
 `;
 
@@ -62,13 +63,14 @@ const Logo = styled.img`
   left: 0;
   display: block;
   width: 60px;
-  height: 60px;
   border-radius: 100%;
   @media ${({ theme }) => theme.breakpoints.lg} {
-    position: static;
-    width: 100%;
-    height: auto;
     transform: none;
+    position: static;
+    width: 50px;
+  }
+  @media ${({ theme }) => theme.breakpoints.xl} {
+    width: 60px;
   }
 `;
 
@@ -145,6 +147,7 @@ const OtherInfo = styled.span`
   font-weight: ${({ theme }) => theme.fontWeights.bold};
   font-size: ${({ theme }) => theme.fontSizes.s};
   margin-right: 9px;
+  white-space: nowrap;
   &:after {
     content: '•';
     margin-left: 9px;
@@ -163,7 +166,6 @@ const TagsWrapper = styled.div`
   align-items: center;
   width: 100%;
   @media ${({ theme }) => theme.breakpoints.lg} {
-    flex-grow: 1;
     width: auto;
     justify-content: flex-end;
     padding-left: 10px;
@@ -193,7 +195,7 @@ const OfferItem = ({ item }) => {
   return (
     <ListItem isFeatured={item.featured}>
       <LogoWrapper>
-        <Logo src={image} alt={item.company} />
+        <Logo src={item.image.publicURL} alt={item.company} />
       </LogoWrapper>
       <ContentWrapper>
         <CompanyWrapper>
