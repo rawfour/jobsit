@@ -1,7 +1,9 @@
-import React from 'react';
+import React from // , { useContext }
+'react';
 import styled from 'styled-components';
 import { useStaticQuery, graphql } from 'gatsby';
 import OfferItem from './OfferItem';
+// import { GlobalDispatchContext, GlobalStateContext } from '../context/GlobalContextProvider';
 
 const OffersWrapper = styled.ul`
   position: relative;
@@ -16,6 +18,9 @@ const OffersWrapper = styled.ul`
 `;
 
 const Offers = () => {
+  // const dispatch = useContext(GlobalDispatchContext);
+  // const state = useContext(GlobalStateContext);
+
   const data = useStaticQuery(graphql`
     {
       allMdx {

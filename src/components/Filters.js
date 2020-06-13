@@ -1,6 +1,12 @@
 import React from 'react';
-import styled, { css } from 'styled-components';
+import styled, { css, withTheme } from 'styled-components';
+import PropTypes from 'prop-types';
+import { useStaticQuery, graphql } from 'gatsby';
 import CloseIcon from '@material-ui/icons/Close';
+import { useMediaQuery } from 'react-responsive';
+import FilterPopover from './FilterPopover';
+import Modal from './Modal';
+// import { CHANGE_ACTIVE_FILTERS } from '../context/actionTypes';
 
 const FiltersWrapper = styled.div`
   display: flex;
@@ -136,44 +142,153 @@ const ResetAll = styled.button`
   }
 `;
 
-const Filters = () => {
+const FilterName = styled.h5`
+  font-size: ${({ theme }) => theme.fontSizes.xl};
+  font-weight: ${({ theme }) => theme.fontWeights.normal};
+`;
+
+const FilterItemsWrapper = styled.div`
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+`;
+
+const FilterItem = styled.button`
+  flex-basis: auto;
+  color: ${({ theme }) => theme.colors.primary};
+  transition: 0.2s;
+  padding: 10px 20px;
+  margin: 10px;
+  border: none;
+  border-radius: 4px;
+  background-color: ${({ theme }) => theme.colors.lightPrimary};
+  cursor: pointer;
+  &:hover {
+    color: ${({ theme }) => theme.colors.textInverse};
+    background-color: ${({ theme }) => theme.colors.primary};
+  }
+  ${({ active }) =>
+    active &&
+    css`
+      color: ${({ theme }) => theme.colors.textInverse};
+      background-color: ${({ theme }) => theme.colors.primary};
+      &:hover {
+        color: ${({ theme }) => theme.colors.primary};
+        background-color: ${({ theme }) => theme.colors.lightPrimary};
+      }
+    `}
+`;
+
+const Filters = ({ theme }) => {
+  const isDesktop = useMediaQuery({
+    query: theme.breakpoints.md,
+  });
+
+  const data = useStaticQuery(graphql`
+    {
+      allMdx {
+        technologies: distinct(field: frontmatter___languages)
+        location: distinct(field: frontmatter___location)
+        category: distinct(field: frontmatter___role)
+        contract: distinct(field: frontmatter___contract)
+        experience: distinct(field: frontmatter___level)
+      }
+    }
+  `);
+
+  const [filterOpen, setFilterOpen] = React.useState({ isOpen: false, anchorEl: null });
+
+  const onOpen = (event) => {
+    setFilterOpen({ isOpen: true, anchorEl: event.currentTarget });
+  };
+
+  const onClose = () => {
+    setFilterOpen({ isOpen: false, anchorEl: null });
+  };
+
+  const firstLetterToUppercase = (string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
+
   return (
-    <FiltersWrapper>
-      <InnerWrapper>
-        <FilterWrapper>
-          <Filter active>Technologies</Filter>
-          <ResetFilter>
-            <CloseIcon />
-          </ResetFilter>
-        </FilterWrapper>
-        <FilterWrapper>
-          <Filter active>Location</Filter>
-          <ResetFilter>
-            <CloseIcon />
-          </ResetFilter>
-        </FilterWrapper>
-        <FilterWrapper>
-          <Filter active>Category</Filter>
-          <ResetFilter>
-            <CloseIcon />
-          </ResetFilter>
-        </FilterWrapper>
-        <FilterWrapper>
-          <Filter active>Contract</Filter>
-          <ResetFilter>
-            <CloseIcon />
-          </ResetFilter>
-        </FilterWrapper>
-        <FilterWrapper>
-          <Filter active>Experience</Filter>
-          <ResetFilter>
-            <CloseIcon />
-          </ResetFilter>
-        </FilterWrapper>
-      </InnerWrapper>
-      <ResetAll>Clear</ResetAll>
-    </FiltersWrapper>
+    <>
+      <FiltersWrapper>
+        <InnerWrapper>
+          <FilterWrapper>
+            <Filter name="technologies" onClick={onOpen} active>
+              Technologies
+            </Filter>
+            <ResetFilter>
+              <CloseIcon />
+            </ResetFilter>
+          </FilterWrapper>
+          <FilterWrapper>
+            <Filter name="location" onClick={onOpen} active>
+              Location
+            </Filter>
+            <ResetFilter>
+              <CloseIcon />
+            </ResetFilter>
+          </FilterWrapper>
+          <FilterWrapper>
+            <Filter name="category" onClick={onOpen} active>
+              Category
+            </Filter>
+            <ResetFilter>
+              <CloseIcon />
+            </ResetFilter>
+          </FilterWrapper>
+          <FilterWrapper>
+            <Filter name="contract" onClick={onOpen} active>
+              Contract
+            </Filter>
+            <ResetFilter>
+              <CloseIcon />
+            </ResetFilter>
+          </FilterWrapper>
+          <FilterWrapper>
+            <Filter name="experience" onClick={onOpen} active>
+              Experience
+            </Filter>
+            <ResetFilter>
+              <CloseIcon />
+            </ResetFilter>
+          </FilterWrapper>
+        </InnerWrapper>
+        <ResetAll>Clear</ResetAll>
+      </FiltersWrapper>
+      {filterOpen.isOpen && (
+        <>
+          {isDesktop ? (
+            <>
+              <FilterPopover onClose={onClose} anchorEl={filterOpen.anchorEl}>
+                <FilterName>{firstLetterToUppercase(filterOpen.anchorEl.name)}</FilterName>
+                <FilterItemsWrapper>
+                  {data.allMdx[filterOpen.anchorEl.name].map((item) => (
+                    <FilterItem key={item}>{item}</FilterItem>
+                  ))}
+                </FilterItemsWrapper>
+              </FilterPopover>
+            </>
+          ) : (
+            <Modal open={filterOpen.isOpen} onClose={onClose}>
+              <FilterName>{firstLetterToUppercase(filterOpen.anchorEl.name)}</FilterName>
+              <FilterItemsWrapper>
+                {data.allMdx[filterOpen.anchorEl.name].map((item) => (
+                  <FilterItem key={item}>{item}</FilterItem>
+                ))}
+              </FilterItemsWrapper>
+            </Modal>
+          )}
+        </>
+      )}
+    </>
   );
 };
 
-export default Filters;
+Filters.propTypes = {
+  theme: PropTypes.shape().isRequired,
+};
+
+export default withTheme(Filters);
