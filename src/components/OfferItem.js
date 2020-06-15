@@ -167,6 +167,7 @@ const TagsWrapper = styled.div`
   width: 100%;
   @media ${({ theme }) => theme.breakpoints.lg} {
     width: auto;
+    margin-left: auto;
     justify-content: flex-end;
     padding-left: 10px;
   }
@@ -185,9 +186,6 @@ const Tag = styled.span`
   &:hover {
     color: ${({ theme }) => theme.colors.textInverse};
     background-color: ${({ theme }) => theme.colors.primary};
-  }
-  @media ${({ theme }) => theme.breakpoints.lg} {
-    margin: 0 10px 0 0;
   }
 `;
 

@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled, { css, withTheme } from 'styled-components';
 import PropTypes from 'prop-types';
 import { useStaticQuery, graphql } from 'gatsby';
+import { connect } from 'react-redux';
 import CloseIcon from '@material-ui/icons/Close';
 import { useMediaQuery } from 'react-responsive';
 import FilterPopover from './FilterPopover';
 import Modal from './Modal';
-// import { CHANGE_ACTIVE_FILTERS } from '../context/actionTypes';
+import { changeActiveFilters as changeActiveFiltersAction } from '../state/actions';
 
 const FiltersWrapper = styled.div`
   display: flex;
@@ -50,22 +51,6 @@ const InnerWrapper = styled.div`
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  @media ${({ theme }) => theme.breakpoints.lg} {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-  }
-  @media ${({ theme }) => theme.breakpoints.xl} {
-    grid-template-columns: 1fr 1fr 1fr;
-  }
-  @media ${({ theme }) => theme.breakpoints.xxl} {
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-  }
-  @media ${({ theme }) => theme.breakpoints.xxxl} {
-    /* grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-     */
-    display: flex;
-    grid-template-columns: none;
-  }
 `;
 
 const FilterWrapper = styled.div`
@@ -145,6 +130,7 @@ const ResetAll = styled.button`
 const FilterName = styled.h5`
   font-size: ${({ theme }) => theme.fontSizes.xl};
   font-weight: ${({ theme }) => theme.fontWeights.normal};
+  margin: 0 10px;
 `;
 
 const FilterItemsWrapper = styled.div`
@@ -168,19 +154,39 @@ const FilterItem = styled.button`
     color: ${({ theme }) => theme.colors.textInverse};
     background-color: ${({ theme }) => theme.colors.primary};
   }
+
   ${({ active }) =>
     active &&
     css`
       color: ${({ theme }) => theme.colors.textInverse};
       background-color: ${({ theme }) => theme.colors.primary};
-      &:hover {
-        color: ${({ theme }) => theme.colors.primary};
-        background-color: ${({ theme }) => theme.colors.lightPrimary};
-      }
     `}
 `;
 
-const Filters = ({ theme }) => {
+const ButtonsWrapper = styled.div`
+  margin-top: 20px;
+  padding: 20px 10px 0 10px;
+  border-top: 1px solid ${({ theme }) => theme.colors.lightGray};
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const ApproveButton = styled.button`
+  padding: 10px 20px;
+  border: 2px solid ${({ theme }) => theme.colors.primary};
+  background-color: transparent;
+  color: ${({ theme }) => theme.colors.primary};
+  cursor: pointer;
+  transition: 0.2s;
+  border-radius: 4px;
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.primary};
+    color: ${({ theme }) => theme.colors.textInverse};
+  }
+`;
+
+const Filters = ({ theme, activeFilters, changeActiveFilters }) => {
   const isDesktop = useMediaQuery({
     query: theme.breakpoints.md,
   });
@@ -188,16 +194,22 @@ const Filters = ({ theme }) => {
   const data = useStaticQuery(graphql`
     {
       allMdx {
-        technologies: distinct(field: frontmatter___languages)
+        languages: distinct(field: frontmatter___languages)
         location: distinct(field: frontmatter___location)
-        category: distinct(field: frontmatter___role)
+        role: distinct(field: frontmatter___role)
         contract: distinct(field: frontmatter___contract)
-        experience: distinct(field: frontmatter___level)
+        level: distinct(field: frontmatter___level)
       }
     }
   `);
 
-  const [filterOpen, setFilterOpen] = React.useState({ isOpen: false, anchorEl: null });
+  const [selectedFilters, setSelectedFilters] = useState(activeFilters);
+
+  useEffect(() => {
+    setSelectedFilters(activeFilters);
+  }, [activeFilters]);
+
+  const [filterOpen, setFilterOpen] = useState({ isOpen: false, anchorEl: null });
 
   const onOpen = (event) => {
     setFilterOpen({ isOpen: true, anchorEl: event.currentTarget });
@@ -211,74 +223,172 @@ const Filters = ({ theme }) => {
     return string.charAt(0).toUpperCase() + string.slice(1);
   };
 
+  const handleSelectFilter = (filterKey, filterValue) => {
+    let updatedFilters = selectedFilters;
+    const valuesOfCurrentFilter = selectedFilters[filterKey];
+
+    if (valuesOfCurrentFilter) {
+      let updatedValueList;
+
+      if (valuesOfCurrentFilter.includes(filterValue)) {
+        // there is already a key like this and there is a value like this, so I delete the value
+        updatedValueList = valuesOfCurrentFilter.filter((item) => item !== filterValue);
+      } else {
+        // there is already such a key, but there is no value like this, so add this value
+        updatedValueList = [...valuesOfCurrentFilter, filterValue];
+      }
+
+      updatedFilters = { ...selectedFilters, [filterKey]: updatedValueList };
+
+      if (!updatedValueList.length) {
+        // the value was removed but it was last in array so I delete the whole key
+        delete updatedFilters[filterKey];
+      }
+    } else {
+      // there is no key like this and no value like this so I add the key and value
+      updatedFilters = { ...selectedFilters, [filterKey]: [filterValue] };
+    }
+
+    setSelectedFilters(updatedFilters);
+  };
+
+  const handleClearFilter = (filterKey) => {
+    const updatedFilters = selectedFilters;
+    const valuesOfCurrentFilter = selectedFilters[filterKey];
+
+    if (valuesOfCurrentFilter) {
+      delete updatedFilters[filterKey];
+      changeActiveFilters({ ...updatedFilters });
+    }
+  };
+
+  const handleResetAllFilters = () => {
+    if (Object.keys(selectedFilters).length !== 0) {
+      changeActiveFilters({});
+    }
+  };
+
+  const handleApprove = () => {
+    changeActiveFilters(selectedFilters);
+    onClose();
+  };
+
   return (
     <>
       <FiltersWrapper>
         <InnerWrapper>
           <FilterWrapper>
-            <Filter name="technologies" onClick={onOpen} active>
-              Technologies
+            <Filter name="languages" onClick={onOpen} active={selectedFilters.languages && true}>
+              {selectedFilters.languages
+                ? `${selectedFilters.languages[0]}${selectedFilters.languages[1] ? '...' : ''}`
+                : 'Languages'}
             </Filter>
-            <ResetFilter>
-              <CloseIcon />
-            </ResetFilter>
+            {selectedFilters.languages && (
+              <ResetFilter onClick={() => handleClearFilter('languages')}>
+                <CloseIcon />
+              </ResetFilter>
+            )}
           </FilterWrapper>
           <FilterWrapper>
-            <Filter name="location" onClick={onOpen} active>
-              Location
+            <Filter name="location" onClick={onOpen} active={selectedFilters.location && true}>
+              {selectedFilters.location
+                ? `${selectedFilters.location[0]}${selectedFilters.location[1] ? '...' : ''}`
+                : 'Location'}
             </Filter>
-            <ResetFilter>
-              <CloseIcon />
-            </ResetFilter>
+            {selectedFilters.location && (
+              <ResetFilter onClick={() => handleClearFilter('location')}>
+                <CloseIcon />
+              </ResetFilter>
+            )}
           </FilterWrapper>
           <FilterWrapper>
-            <Filter name="category" onClick={onOpen} active>
-              Category
+            <Filter name="role" onClick={onOpen} active={selectedFilters.role && true}>
+              {selectedFilters.role
+                ? `${selectedFilters.role[0]}${selectedFilters.role[1] ? '...' : ''}`
+                : 'Role'}
             </Filter>
-            <ResetFilter>
-              <CloseIcon />
-            </ResetFilter>
+            {selectedFilters.role && (
+              <ResetFilter onClick={() => handleClearFilter('role')}>
+                <CloseIcon />
+              </ResetFilter>
+            )}
           </FilterWrapper>
           <FilterWrapper>
-            <Filter name="contract" onClick={onOpen} active>
-              Contract
+            <Filter name="contract" onClick={onOpen} active={selectedFilters.contract && true}>
+              {selectedFilters.contract
+                ? `${selectedFilters.contract[0]}${selectedFilters.contract[1] ? '...' : ''}`
+                : 'Contract'}
             </Filter>
-            <ResetFilter>
-              <CloseIcon />
-            </ResetFilter>
+            {selectedFilters.contract && (
+              <ResetFilter onClick={() => handleClearFilter('contract')}>
+                <CloseIcon />
+              </ResetFilter>
+            )}
           </FilterWrapper>
           <FilterWrapper>
-            <Filter name="experience" onClick={onOpen} active>
-              Experience
+            <Filter name="level" onClick={onOpen} active={selectedFilters.level && true}>
+              {selectedFilters.level
+                ? `${selectedFilters.level[0]}${selectedFilters.level[1] ? '...' : ''}`
+                : 'Level'}
             </Filter>
-            <ResetFilter>
-              <CloseIcon />
-            </ResetFilter>
+            {selectedFilters.level && (
+              <ResetFilter onClick={() => handleClearFilter('level')}>
+                <CloseIcon />
+              </ResetFilter>
+            )}
           </FilterWrapper>
         </InnerWrapper>
-        <ResetAll>Clear</ResetAll>
+        <ResetAll onClick={handleResetAllFilters}>Clear</ResetAll>
       </FiltersWrapper>
       {filterOpen.isOpen && (
         <>
           {isDesktop ? (
-            <>
-              <FilterPopover onClose={onClose} anchorEl={filterOpen.anchorEl}>
-                <FilterName>{firstLetterToUppercase(filterOpen.anchorEl.name)}</FilterName>
-                <FilterItemsWrapper>
-                  {data.allMdx[filterOpen.anchorEl.name].map((item) => (
-                    <FilterItem key={item}>{item}</FilterItem>
-                  ))}
-                </FilterItemsWrapper>
-              </FilterPopover>
-            </>
+            <FilterPopover onClose={onClose} anchorEl={filterOpen.anchorEl}>
+              <FilterName>{firstLetterToUppercase(filterOpen.anchorEl.name)}</FilterName>
+              <FilterItemsWrapper>
+                {data.allMdx[filterOpen.anchorEl.name].map((item) => (
+                  <FilterItem
+                    key={item}
+                    active={
+                      selectedFilters[filterOpen.anchorEl.name] &&
+                      selectedFilters[filterOpen.anchorEl.name].includes(item)
+                    }
+                    onClick={() => handleSelectFilter(filterOpen.anchorEl.name, item)}
+                  >
+                    {item}
+                  </FilterItem>
+                ))}
+              </FilterItemsWrapper>
+              <ButtonsWrapper>
+                <ResetAll onClick={() => handleClearFilter(filterOpen.anchorEl.name)}>
+                  Clear
+                </ResetAll>
+                <ApproveButton onClick={handleApprove}>Approve</ApproveButton>
+              </ButtonsWrapper>
+            </FilterPopover>
           ) : (
             <Modal open={filterOpen.isOpen} onClose={onClose}>
               <FilterName>{firstLetterToUppercase(filterOpen.anchorEl.name)}</FilterName>
               <FilterItemsWrapper>
                 {data.allMdx[filterOpen.anchorEl.name].map((item) => (
-                  <FilterItem key={item}>{item}</FilterItem>
+                  <FilterItem
+                    key={item}
+                    active={
+                      selectedFilters[filterOpen.anchorEl.name] &&
+                      selectedFilters[filterOpen.anchorEl.name].includes(item)
+                    }
+                    onClick={() => handleSelectFilter(filterOpen.anchorEl.name, item)}
+                  >
+                    {item}
+                  </FilterItem>
                 ))}
               </FilterItemsWrapper>
+              <ButtonsWrapper>
+                <ResetAll onClick={() => handleClearFilter(filterOpen.anchorEl.name)}>
+                  Clear
+                </ResetAll>
+                <ApproveButton onClick={handleApprove}>Approve</ApproveButton>
+              </ButtonsWrapper>
             </Modal>
           )}
         </>
@@ -289,6 +399,18 @@ const Filters = ({ theme }) => {
 
 Filters.propTypes = {
   theme: PropTypes.shape().isRequired,
+  activeFilters: PropTypes.shape().isRequired,
+  changeActiveFilters: PropTypes.func.isRequired,
 };
 
-export default withTheme(Filters);
+const mapStateToProps = ({ activeFilters }) => {
+  return {
+    activeFilters,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => ({
+  changeActiveFilters: (data) => dispatch(changeActiveFiltersAction(data)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(withTheme(Filters));

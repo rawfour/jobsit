@@ -1,6 +1,3 @@
-const React = require('react');
-const GlobalContextProvider = require('./src/context/GlobalContextProvider').default;
+import wrapWithProvider from './src/state/ReduxWrapper';
 
-exports.wrapRootElement = ({ element }) => {
-  return <GlobalContextProvider>{element}</GlobalContextProvider>;
-};
+export const wrapRootElement = wrapWithProvider;

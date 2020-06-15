@@ -7,6 +7,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 const ContentWrapper = styled.div`
   padding: 20px;
+  max-width: 700px;
 `;
 
 const FilterPopover = ({ children, onClose, anchorEl }) => {

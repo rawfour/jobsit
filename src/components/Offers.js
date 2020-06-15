@@ -1,9 +1,9 @@
-import React from // , { useContext }
-'react';
+import React, { useEffect } from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { useStaticQuery, graphql } from 'gatsby';
+import { connect } from 'react-redux';
+import { useOffers } from '../hooks/use-offers';
 import OfferItem from './OfferItem';
-// import { GlobalDispatchContext, GlobalStateContext } from '../context/GlobalContextProvider';
 
 const OffersWrapper = styled.ul`
   position: relative;
@@ -17,41 +17,55 @@ const OffersWrapper = styled.ul`
   }
 `;
 
-const Offers = () => {
-  // const dispatch = useContext(GlobalDispatchContext);
-  // const state = useContext(GlobalStateContext);
+const Offers = ({ activeFilters }) => {
+  const { nodes } = useOffers();
 
-  const data = useStaticQuery(graphql`
-    {
-      allMdx {
-        nodes {
-          id
-          frontmatter {
-            company
-            image {
-              publicURL
-            }
-            new
-            featured
-            position
-            role
-            level
-            postedAt
-            contract
-            location
-            languages
-            tools
+  const allOffers = nodes;
+  let newOfferList = allOffers;
+
+  if (Object.keys(activeFilters).length !== 0) {
+    Object.keys(activeFilters).forEach((key, index) => {
+      if (index === 0) {
+        newOfferList = allOffers.filter((offer) => {
+          let addOffer = false;
+
+          if (typeof offer.frontmatter[key] === 'object') {
+            addOffer = offer.frontmatter[key].some((item) => activeFilters[key].includes(item));
+          } else {
+            addOffer = activeFilters[key].includes(offer.frontmatter[key]);
           }
-        }
+
+          return addOffer;
+        });
+      } else {
+        newOfferList = newOfferList.filter((offer) => {
+          let addOffer = false;
+
+          if (typeof offer.frontmatter[key] === 'object') {
+            addOffer = offer.frontmatter[key].some((item) => activeFilters[key].includes(item));
+          } else {
+            addOffer = activeFilters[key].includes(offer.frontmatter[key]);
+          }
+
+          return addOffer;
+        });
       }
-    }
-  `);
+    });
+  }
 
-  const { allMdx } = data;
+  const items = newOfferList.map((item) => <OfferItem key={item.id} item={item.frontmatter} />);
 
-  const items = allMdx.nodes.map((item) => <OfferItem key={item.id} item={item.frontmatter} />);
-
-  return <OffersWrapper>{items}</OffersWrapper>;
+  return <OffersWrapper activeFilters={activeFilters}>{items}</OffersWrapper>;
 };
 
-export default Offers;
+Offers.propTypes = {
+  activeFilters: PropTypes.shape().isRequired,
+};
+
+const mapStateToProps = ({ activeFilters }) => {
+  return {
+    activeFilters,
+  };
+};
+
+export default connect(mapStateToProps, null)(Offers);
