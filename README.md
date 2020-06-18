@@ -8,5 +8,6 @@
   Project is creating with gatsby
 </h1>
 
-## :hammer:Work in progress...
-### check progress :point_right:  https://epic-noyce-048734.netlify.app/
+## :hammer:Website under construction...
+
+### check progress :point_right: https://epic-noyce-048734.netlify.app/

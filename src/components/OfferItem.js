@@ -130,7 +130,7 @@ const Badge = styled.span`
     `}
 `;
 
-const Position = styled.span`
+const Role = styled.span`
   color: ${({ theme }) => theme.colors.text};
   font-weight: ${({ theme }) => theme.fontWeights.bold};
   font-size: ${({ theme }) => theme.fontSizes.m};
@@ -201,7 +201,7 @@ const OfferItem = ({ item }) => {
           {item.new && <Badge isNew={item.new}>New!</Badge>}
           {item.featured && <Badge isFeatured={item.featured}>Featured</Badge>}
         </CompanyWrapper>
-        <Position>{item.position}</Position>
+        <Role>{item.position}</Role>
         <div>
           <OtherInfo>{item.postedAt}</OtherInfo>
           <OtherInfo>{item.contract}</OtherInfo>

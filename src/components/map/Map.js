@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import GoogleMapReact from 'google-map-react';
 import styled from 'styled-components';
-import Marker from './Marker';
+import CopanyMarker from './CompanyMarker';
 
 const MapWrapper = styled.div`
   height: calc(100vh - 280px);
@@ -39,11 +39,12 @@ const Map = ({ offers }) => {
           {offers.map(
             (item) =>
               item.frontmatter.location !== 'Remote' && (
-                <Marker
+                <CopanyMarker
                   key={item.id}
                   lat={item.frontmatter.coordinates.lat}
                   lng={item.frontmatter.coordinates.lng}
                   stack={item.frontmatter.languages || item.frontmatter.rools}
+                  offerInfo={item.frontmatter}
                 />
               ),
           )}
