@@ -5,9 +5,8 @@
   </a>
 </p>
 <h1 align="center">
-  Gatsby's default starter
+  Project is creating with gatsby
 </h1>
 
-## Work in progress...
-
-initial look: https://5ee89d31b008ab019ad41c9c--epic-noyce-048734.netlify.app/
+## :hammer:Work in progress...
+### check progress :point_right:  https://epic-noyce-048734.netlify.app/
