@@ -1,8 +1,7 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
-import { useOffers } from '../hooks/use-offers';
 import OfferItem from './OfferItem';
 
 const OffersWrapper = styled.ul`
@@ -17,16 +16,13 @@ const OffersWrapper = styled.ul`
   }
 `;
 
-const Offers = ({ activeFilters }) => {
-  const { nodes } = useOffers();
-
-  const allOffers = nodes;
-  let newOfferList = allOffers;
+const Offers = ({ activeFilters, offers }) => {
+  let newOfferList = offers;
 
   if (Object.keys(activeFilters).length !== 0) {
     Object.keys(activeFilters).forEach((key, index) => {
       if (index === 0) {
-        newOfferList = allOffers.filter((offer) => {
+        newOfferList = offers.filter((offer) => {
           let addOffer = false;
 
           if (typeof offer.frontmatter[key] === 'object') {
@@ -60,6 +56,7 @@ const Offers = ({ activeFilters }) => {
 
 Offers.propTypes = {
   activeFilters: PropTypes.shape().isRequired,
+  offers: PropTypes.arrayOf(PropTypes.shape()).isRequired,
 };
 
 const mapStateToProps = ({ activeFilters }) => {

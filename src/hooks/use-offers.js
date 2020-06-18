@@ -20,6 +20,12 @@ export const useOffers = () => {
               postedAt
               contract
               location
+              street
+              street_number
+              coordinates {
+                lat
+                lng
+              }
               languages
               tools
             }

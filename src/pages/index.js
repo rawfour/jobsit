@@ -2,7 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled, { withTheme } from 'styled-components';
 import { useMediaQuery } from 'react-responsive';
-import Map from '../components/Map';
+import { useOffers } from '../hooks/use-offers';
+import Map from '../components/map/Map';
 import Offers from '../components/Offers';
 import Filters from '../components/Filters';
 
@@ -43,14 +44,16 @@ const IndexPage = ({ theme }) => {
     query: theme.breakpoints.lg,
   });
 
+  const { nodes } = useOffers();
+
   return (
     <PageWrapper>
       <FiltersWrapper>
         <Filters />
-        {isDesktop && <Map options={mapOptions} />}
+        {isDesktop && <Map offers={nodes} options={mapOptions} />}
       </FiltersWrapper>
       <OffersWrapper>
-        <Offers />
+        <Offers offers={nodes} />
       </OffersWrapper>
     </PageWrapper>
   );
