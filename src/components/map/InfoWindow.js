@@ -14,6 +14,7 @@ const InfoWindowWrapper = styled.div`
   background-color: ${({ theme }) => theme.colors.white};
   box-shadow: ${({ theme }) => theme.shadows.basic};
   padding: 15px 10px;
+  z-index: 2;
   cursor: auto;
   opacity: 0;
   overflow: hidden;

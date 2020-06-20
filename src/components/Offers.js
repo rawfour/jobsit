@@ -16,7 +16,9 @@ const OffersWrapper = styled.ul`
 `;
 
 const Offers = ({ offers }) => {
-  const items = offers.map((item) => <OfferItem key={item.id} item={item.frontmatter} />);
+  const items = offers
+    .sort((a, b) => b.frontmatter.postedAt - a.frontmatter.postedAt)
+    .map((item) => <OfferItem key={item.id} item={item.frontmatter} />);
 
   return <OffersWrapper>{items}</OffersWrapper>;
 };

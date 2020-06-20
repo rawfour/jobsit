@@ -1,6 +1,7 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
 import PropTypes from 'prop-types';
+import { countPostedTime } from '../utils';
 
 const ListItem = styled.li`
   display: flex;
@@ -203,7 +204,7 @@ const OfferItem = ({ item }) => {
         </CompanyWrapper>
         <Role>{item.position}</Role>
         <div>
-          <OtherInfo>{item.postedAt}</OtherInfo>
+          <OtherInfo>{countPostedTime(item.postedAt)}</OtherInfo>
           <OtherInfo>{item.contract}</OtherInfo>
           <OtherInfo>{item.location}</OtherInfo>
         </div>

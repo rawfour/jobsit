@@ -8,6 +8,7 @@ import { useMediaQuery } from 'react-responsive';
 import FilterPopover from './FilterPopover';
 import Modal from './Modal';
 import { changeActiveFilters as changeActiveFiltersAction } from '../state/actions';
+import { firstLetterToUppercase } from '../utils';
 
 const FiltersWrapper = styled.div`
   display: flex;
@@ -217,10 +218,6 @@ const Filters = ({ theme, activeFilters, changeActiveFilters }) => {
 
   const onClose = () => {
     setFilterOpen({ isOpen: false, anchorEl: null });
-  };
-
-  const firstLetterToUppercase = (string) => {
-    return string.charAt(0).toUpperCase() + string.slice(1);
   };
 
   const handleSelectFilter = (filterKey, filterValue) => {
