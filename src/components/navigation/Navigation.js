@@ -1,12 +1,14 @@
-import React from 'react';
-import styled from 'styled-components';
+import React, { useEffect } from 'react';
+import styled, { css } from 'styled-components';
+import PropTypes from 'prop-types';
 import { Link, useStaticQuery, graphql } from 'gatsby';
+import withContext from '../../hoc/withContext';
 
 const Nav = styled.nav`
   display: flex;
   align-items: center;
-  padding: 0 40px 100px 40px;
-  height: 180px;
+  padding: 0 40px;
+  height: 80px;
   width: 100%;
   background-color: ${({ theme }) => theme.colors.primary};
   color: ${({ theme }) => theme.colors.textInverse};
@@ -14,10 +16,19 @@ const Nav = styled.nav`
   background-repeat: no-repeat;
   background-size: cover;
   @media ${({ theme }) => theme.breakpoints.lg} {
-    padding: 0 40px;
-    height: 80px;
     background-image: url(${({ bg }) => bg.desktop.publicURL});
   }
+  ${({ special }) =>
+    special &&
+    css`
+      padding: 0 40px 100px 40px;
+      height: 180px;
+      background-image: url(${({ bg }) => bg.desktop.publicURL});
+      @media ${({ theme }) => theme.breakpoints.lg} {
+        padding: 0 40px;
+        height: 80px;
+      }
+    `};
 `;
 
 const WebTitle = styled.span`
@@ -59,7 +70,7 @@ const MenuItem = styled.li`
   }
 `;
 
-const Navigation = () => {
+const Navigation = ({ context, pathname }) => {
   const data = useStaticQuery(graphql`
     {
       desktop: file(name: { eq: "bg-header-desktop" }) {
@@ -71,8 +82,21 @@ const Navigation = () => {
     }
   `);
 
+  const {
+    state: { specialLayout },
+    updateValue,
+  } = context;
+
+  useEffect(() => {
+    if (pathname === '/' && !specialLayout) {
+      updateValue({ specialLayout: true });
+    } else if (pathname !== '/' && specialLayout) {
+      updateValue({ specialLayout: false });
+    }
+  });
+
   return (
-    <Nav bg={data}>
+    <Nav special={specialLayout} bg={data}>
       <WebTitle>
         <Link to="/">
           jobs<span>IT</span>
@@ -91,4 +115,9 @@ const Navigation = () => {
   );
 };
 
-export default Navigation;
+Navigation.propTypes = {
+  pathname: PropTypes.string.isRequired,
+  context: PropTypes.shape().isRequired,
+};
+
+export default withContext(Navigation);

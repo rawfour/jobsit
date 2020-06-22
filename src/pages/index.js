@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import styled, { withTheme } from 'styled-components';
 import { useMediaQuery } from 'react-responsive';
@@ -10,24 +10,26 @@ import Filters from '../components/Filters';
 
 const mapOptions = {
   center: { lat: 52, lng: 18 },
-  zoom: 6,
-  scrollwheel: true,
-  mapTypeControl: false,
-  streetViewControl: false,
+  zoom: 5,
 };
 
 const PageWrapper = styled.div`
   display: flex;
   flex-wrap: wrap;
+  @media ${({ theme }) => theme.breakpoints.lg} {
+    flex-wrap: nowrap;
+  }
 `;
 
 const OffersWrapper = styled.div`
   position: relative;
-
   flex-basis: 100%;
   @media ${({ theme }) => theme.breakpoints.lg} {
     flex-basis: 50%;
   }
+  /* @media ${({ theme }) => theme.breakpoints.xl} {
+    flex-basis: 40%;
+  } */
 `;
 
 const FiltersWrapper = styled.div`
@@ -38,6 +40,9 @@ const FiltersWrapper = styled.div`
     flex-basis: 50%;
     order: 2;
   }
+  /* @media ${({ theme }) => theme.breakpoints.xl} {
+    flex-basis: 60%;
+  } */
 `;
 
 const IndexPage = ({ theme, activeFilters }) => {

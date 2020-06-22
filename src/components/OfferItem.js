@@ -1,6 +1,7 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
 import PropTypes from 'prop-types';
+import { Link } from 'gatsby';
 import { countPostedTime } from '../utils';
 
 const ListItem = styled.li`
@@ -131,7 +132,7 @@ const Badge = styled.span`
     `}
 `;
 
-const Role = styled.span`
+const Role = styled(Link)`
   color: ${({ theme }) => theme.colors.text};
   font-weight: ${({ theme }) => theme.fontWeights.bold};
   font-size: ${({ theme }) => theme.fontSizes.m};
@@ -202,7 +203,7 @@ const OfferItem = ({ item }) => {
           {item.new && <Badge isNew={item.new}>New!</Badge>}
           {item.featured && <Badge isFeatured={item.featured}>Featured</Badge>}
         </CompanyWrapper>
-        <Role>{item.position}</Role>
+        <Role to={`/${item.slug}`}>{item.position}</Role>
         <div>
           <OtherInfo>{countPostedTime(item.postedAt)}</OtherInfo>
           <OtherInfo>{item.contract}</OtherInfo>

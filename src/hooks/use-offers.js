@@ -8,6 +8,7 @@ export const useOffers = () => {
           nodes {
             id
             frontmatter {
+              slug
               company
               image {
                 publicURL

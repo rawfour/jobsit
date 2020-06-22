@@ -174,16 +174,17 @@ const ButtonsWrapper = styled.div`
 `;
 
 const ApproveButton = styled.button`
-  padding: 10px 20px;
-  border: 2px solid ${({ theme }) => theme.colors.primary};
-  background-color: transparent;
-  color: ${({ theme }) => theme.colors.primary};
-  cursor: pointer;
+  color: ${({ theme }) => theme.colors.textInverse};
   transition: 0.2s;
+  padding: 10px 20px;
+  height: 100%;
+  border: none;
   border-radius: 4px;
+  background-color: ${({ theme }) => theme.colors.primary};
+  cursor: pointer;
   &:hover {
-    background-color: ${({ theme }) => theme.colors.primary};
-    color: ${({ theme }) => theme.colors.textInverse};
+    color: ${({ theme }) => theme.colors.primary};
+    background-color: ${({ theme }) => theme.colors.lightPrimary};
   }
 `;
 

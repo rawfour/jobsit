@@ -9,6 +9,7 @@ module.exports = {
     `gatsby-plugin-layout`,
     `gatsby-plugin-styled-components`,
     `gatsby-plugin-mdx`,
+    `gatsby-plugin-layout`,
     {
       resolve: `gatsby-plugin-prefetch-google-fonts`,
       options: {

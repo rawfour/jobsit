@@ -1,21 +1,27 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const defaultContextValue = {};
-
-const { Provider, Consumer } = React.createContext(defaultContextValue);
+const { Provider, Consumer } = React.createContext();
 
 class ContextProviderComponent extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      ...defaultContextValue,
-    };
-  }
+  state = {
+    specialLayout: false,
+  };
+
+  handleChangeSate = (newState) => {
+    this.setState((state) => ({
+      ...state,
+      ...newState,
+    }));
+  };
 
   render() {
     const { children } = this.props;
-    return <Provider value={this.state}>{children}</Provider>;
+    return (
+      <Provider value={{ state: this.state, updateValue: this.handleChangeSate }}>
+        {children}
+      </Provider>
+    );
   }
 }
 
