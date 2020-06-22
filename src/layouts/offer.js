@@ -269,8 +269,8 @@ const OfferLayout = ({ data: { mdx }, theme }) => {
   return (
     <PageWrapper>
       <OfferWrapper>
-        <BackButton>
-          <BackIcon to="/" /> Back
+        <BackButton to="/">
+          <BackIcon /> Back
         </BackButton>
         <OfferHeader>
           <LogoWrapper>

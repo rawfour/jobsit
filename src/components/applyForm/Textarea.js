@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import PropTypes from 'prop-types';
 import { ErrorMessage } from 'formik';
 
 const TextareaWrapper = styled.div`
@@ -67,6 +68,15 @@ const Textarea = ({ name, value, blur, action, label, errorMessage }) => {
       <StyledTextarea id={name} name={name} value={value} onBlur={blur} onChange={action} />
     </TextareaWrapper>
   );
+};
+
+Textarea.propTypes = {
+  name: PropTypes.string.isRequired,
+  value: PropTypes.string.isRequired,
+  blur: PropTypes.func.isRequired,
+  action: PropTypes.func.isRequired,
+  label: PropTypes.string.isRequired,
+  errorMessage: PropTypes.string.isRequired,
 };
 
 export default Textarea;
