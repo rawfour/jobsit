@@ -1,6 +1,6 @@
-import React, { useState, createRef } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import PropTypes from 'prop-types';
+import { ErrorMessage } from 'formik';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 
 const InputWrapper = styled.div`
@@ -52,81 +52,32 @@ const PlaceholderPreview = styled.label`
 const FileIcon = styled(FileCopyIcon)`
   height: 48px !important;
   width: 48px !important;
-  color: ${({ theme }) => theme.colors.primary};
+  color: ${({ theme }) => theme.colors.white};
 `;
 
-const FileName = styled.span`
-  font-size: ${({ theme }) => theme.fontSizes.s};
-  color: ${({ theme }) => theme.colors.primary};
-`;
-
-const FileInput = ({ field: { name }, label, setFieldValue, errorMessage }) => {
-  const [file, setFile] = useState({ name: undefined, file: undefined });
-
-  const fileUpload = createRef();
-
-  const showFileUpload = () => {
-    if (fileUpload) {
-      fileUpload.current.click();
-    }
-  };
-
-  const handleImageChange = (e) => {
-    e.preventDefault();
-    const reader = new FileReader();
-    const loadedFile = e.target.files[0];
-
-    if (loadedFile) {
-      reader.onload = () => {
-        setFile({
-          name: loadedFile.name,
-          file: loadedFile,
-        });
-      };
-      reader.readAsDataURL(loadedFile);
-      setFieldValue(name, loadedFile);
-    }
-  };
-
+const FileInput = ({ name, blur, label, errorMessage }) => {
   return (
     <InputWrapper>
       {label && (
         <LabelWrapper htmlFor={name}>
           <Label>{label}</Label>
-          {errorMessage ? (
-            <>
-              <pre> </pre>
-              <ErrorText>* {errorMessage}</ErrorText>
-            </>
-          ) : (
-            'huj'
-          )}
+
+          <ErrorMessage name={errorMessage}>
+            {(msg) => (
+              <>
+                <pre> </pre>
+                <ErrorText>* {msg}</ErrorText>
+              </>
+            )}
+          </ErrorMessage>
         </LabelWrapper>
       )}
-      <PlaceholderPreview htmlFor="file" onClick={showFileUpload}>
+      <PlaceholderPreview htmlFor="file" className="animated-img">
         <FileIcon />
-        {file.name && <FileName>{file.name}</FileName>}
       </PlaceholderPreview>
-      <StyledInput
-        id={name}
-        type="file"
-        name={name}
-        onChange={handleImageChange}
-        ref={fileUpload}
-      />
+      <StyledInput id={name} type="file" name={name} onBlur={blur} />
     </InputWrapper>
   );
-};
-
-FileInput.propTypes = {
-  field: PropTypes.shape().isRequired,
-  setFieldValue: PropTypes.func.isRequired,
-  label: PropTypes.string.isRequired,
-  errorMessage: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
-};
-
-FileInput.defaultProps = {
-  errorMessage: false,
 };
 
 export default FileInput;

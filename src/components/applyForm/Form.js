@@ -1,5 +1,5 @@
 import React from 'react';
-import { Formik, Field } from 'formik';
+import { Formik } from 'formik';
 import styled from 'styled-components';
 import * as Yup from 'yup';
 import Input from './Input';
@@ -52,37 +52,30 @@ const initialValues = {
   email: '',
   name: '',
   introduction: '',
-  file: null,
+  file: undefined,
 };
 
-const file_size = 1048576;
-const supported_formats = ['application/pdf'];
+const FILE_SIZE = 160 * 1024;
+const SUPPORTED_FORMATS = ['image/jpg', 'image/jpeg', 'image/gif', 'image/png'];
 
 const ValidationSchema = Yup.object().shape({
   name: Yup.string()
-    .matches(
-      /^([a-zA-ZĄąŻżŹźĆćĘęŚśÓóŁłŃń]+|[a-zA-ZĄąŻżŹźĆćĘęŚśÓóŁłŃń]+\s{1}[a-zA-ZĄąŻżŹźĆćĘęŚśÓóŁłŃń]{1,}|[a-zA-ZĄąŻżŹźĆćĘęŚśÓóŁłŃń]+\s{1}[a-zA-ZĄąŻżŹźĆćĘęŚśÓóŁłŃń]{3,}\s{1}[a-zA-ZĄąŻżŹźĆćĘęŚśÓóŁłŃń]{1,})$/g,
-      {
-        message: 'This field should contain only letters',
-        excludeEmptyString: true,
-      },
-    )
-    .min(2, 'Name is to short')
-    .max(20, 'Name is too long')
-    .required('Name is equired'),
+    .matches(/^[a-z]+$/i, {
+      message: 'Product name should contain only letters',
+      excludeEmptyString: true,
+    })
+    .min(2, 'Product name is too short')
+    .max(20, 'Product name is too long')
+    .required('Required'),
   introduction: Yup.string()
-    .min(10, 'Field has too few characters')
-    .max(1000, 'Field contain too many characters')
-    .required('Introduction is required'),
-  email: Yup.string().email('Invalid email').required('E-mail is required'),
-  file: Yup.mixed()
-    .required('CV is required')
-    .test(
-      'fileFormat',
-      'Unsupported format',
-      (value) => value && supported_formats.includes(value.type),
-    )
-    .test('fileSize', 'File too large', (value) => value && value.size <= file_size),
+    .matches(/^[a-z]+$/i, {
+      message: 'Product name should contain only letters',
+      excludeEmptyString: true,
+    })
+    .min(2, 'Product name is too short')
+    .max(20, 'Product name is too long')
+    .required('Required'),
+  email: Yup.string().email('Invalid email').required('Required'),
 });
 
 const ApplyForm = () => {
@@ -92,67 +85,48 @@ const ApplyForm = () => {
         initialValues={initialValues}
         validationSchema={ValidationSchema}
         onSubmit={(values, { setSubmitting }) => {
-          const { name, email, introduction, file } = values;
-          console.log(
-            `data from contact form: email: ${email} full name: ${name} short introduction: ${introduction} CV file: ${file}`,
-          );
+          const { name, email, introduction } = values;
+          console.log(name, email, introduction);
           setSubmitting(false);
         }}
-        render={({
-          values,
-          errors,
-          handleChange,
-          handleBlur,
-          handleSubmit,
-          setFieldValue,
-          isSubmitting,
-        }) => {
-          return (
-            <>
-              <Form id="apply" onSubmit={handleSubmit} noValidate>
-                <Input
-                  type="email"
-                  name="email"
-                  value={values.email}
-                  blur={handleBlur}
-                  action={handleChange}
-                  label="E-mail"
-                  errorMessage="email"
-                />
-                <Input
-                  value={values.name}
-                  name="name"
-                  type="text"
-                  blur={handleBlur}
-                  action={handleChange}
-                  label="Full name"
-                  errorMessage="name"
-                />
-                <Textarea
-                  value={values.introduction}
-                  label="Short introduction"
-                  errorMessage="introduction"
-                  name="introduction"
-                  blur={handleBlur}
-                  action={handleChange}
-                />
-                <Field
-                  component={FileInput}
-                  errorMessage={errors.file && errors.file}
-                  label="Add your CV"
-                  name="file"
-                  title="Select a file"
-                  setFieldValue={setFieldValue}
-                  onBlur={handleBlur}
-                />
-              </Form>
-              <ApplyButton type="submit" form="apply" disabled={isSubmitting}>
-                Apply
-              </ApplyButton>
-            </>
-          );
-        }}
-      />
+      >
+        {({ values, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
+          <>
+            <Form id="apply" onSubmit={handleSubmit} noValidate>
+              <Input
+                type="email"
+                name="email"
+                value={values.email}
+                blur={handleBlur}
+                action={handleChange}
+                label="E-mail"
+                errorMessage="email"
+              />
+              <Input
+                value={values.name}
+                name="name"
+                type="text"
+                blur={handleBlur}
+                action={handleChange}
+                label="Full name"
+                errorMessage="name"
+              />
+              <Textarea
+                value={values.introduction}
+                label="Short introduction"
+                errorMessage="introduction"
+                name="introduction"
+                blur={handleBlur}
+                action={handleChange}
+              />
+              <FileInput name="file" label="Upload CV" errorMessage="file" onBlur={handleBlur} />
+            </Form>
+            <ApplyButton type="submit" form="apply" disabled={isSubmitting}>
+              Apply
+            </ApplyButton>
+          </>
+        )}
+      </Formik>
     </FormWrapper>
   );
 };

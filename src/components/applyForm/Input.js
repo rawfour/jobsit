@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import PropTypes from 'prop-types';
 import { ErrorMessage } from 'formik';
 
 const InputWrapper = styled.div`
@@ -70,16 +69,6 @@ const Input = ({ name, type, value, blur, action, label, errorMessage }) => {
       />
     </InputWrapper>
   );
-};
-
-Input.propTypes = {
-  name: PropTypes.string.isRequired,
-  type: PropTypes.string.isRequired,
-  value: PropTypes.string.isRequired,
-  blur: PropTypes.func.isRequired,
-  action: PropTypes.func.isRequired,
-  label: PropTypes.string.isRequired,
-  errorMessage: PropTypes.string.isRequired,
 };
 
 export default Input;
