@@ -97,13 +97,11 @@ const Badge = styled.span`
   &:last-child {
     margin-right: 0;
   }
-
   ${({ isNew }) =>
     isNew &&
     css`
       background-color: ${({ theme }) => theme.colors.primary};
     `};
-
   ${({ isFeatured }) =>
     isFeatured &&
     css`
@@ -269,8 +267,8 @@ const OfferLayout = ({ data: { mdx }, theme }) => {
   return (
     <PageWrapper>
       <OfferWrapper>
-        <BackButton>
-          <BackIcon to="/" /> Back
+        <BackButton to="/">
+          <BackIcon /> Back
         </BackButton>
         <OfferHeader>
           <LogoWrapper>
