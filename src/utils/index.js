@@ -32,3 +32,7 @@ export const countPostedTime = (postedDate) => {
 export const firstLetterToUppercase = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 };
+
+// export const sendAplication = (formContent) => {
+
+// }

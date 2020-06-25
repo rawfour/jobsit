@@ -2,6 +2,7 @@ import React from 'react';
 import { Formik, Field } from 'formik';
 import styled from 'styled-components';
 import * as Yup from 'yup';
+import axios from 'axios';
 import Input from './Input';
 import Textarea from './Textarea';
 import FileInput from './FileInput';
@@ -93,9 +94,18 @@ const ApplyForm = () => {
         validationSchema={ValidationSchema}
         onSubmit={(values, { setSubmitting }) => {
           const { name, email, introduction, file } = values;
-          console.log(
-            `data from contact form: email: ${email} full name: ${name} short introduction: ${introduction} CV file: ${file}`,
-          );
+
+          const apiKey = process.env.ELASTIC_EMAIL_API_KEY;
+          const subject = `Thanks for your apply ${name}`;
+          axios
+            .get(
+              `https://api.elasticemail.com/v2/email/send?apikey=${apiKey}&template=10736&subject=${subject}&bodyText=${introduction}&to=${email}&from=rdziedziela1@gmail.com`,
+            )
+            .then((res) => {
+              const result = res.data;
+              console.log(result);
+            });
+
           setSubmitting(false);
         }}
         render={({
