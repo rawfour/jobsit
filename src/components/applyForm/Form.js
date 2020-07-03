@@ -92,10 +92,10 @@ const ApplyForm = () => {
       <Formik
         initialValues={initialValues}
         validationSchema={ValidationSchema}
-        onSubmit={(values, { setSubmitting }) => {
+        onSubmit={(values, { setSubmitting, resetForm }) => {
           const { name, email, introduction, file } = values;
 
-          const apiKey = process.env.ELASTIC_EMAIL_API_KEY;
+          const apiKey = process.env.GATSBY_ELASTIC_EMAIL_API_KEY;
           const subject = `Thanks for your apply ${name}`;
           axios
             .get(
@@ -104,6 +104,7 @@ const ApplyForm = () => {
             .then((res) => {
               const result = res.data;
               console.log(result);
+              resetForm({});
             });
 
           setSubmitting(false);
